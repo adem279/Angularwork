@@ -1,13 +1,14 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Suggestion } from '../../models/suggestion';
+import { Router } from '@angular/router';
+import { Suggestion } from '../../../models/suggestion';
 
 @Component({
-  selector: 'app-list-suggestion',
-  templateUrl: './list-suggestion.component.html',
-  styleUrls: ['./list-suggestion.component.css']
+  selector: 'app-suggestions-list',
+  templateUrl: './suggestions-list.component.html',
+  styleUrls: ['./suggestions-list.component.css']
 })
-export class ListSuggestionComponent implements OnInit {
+export class SuggestionsListComponent implements OnInit {
 
   suggestions: Suggestion[] = [];
   favorites: Suggestion[] = [];
@@ -22,10 +23,22 @@ export class ListSuggestionComponent implements OnInit {
   currentFilter: string = 'all';
   showFavoritesView: boolean = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  // ========================================
+  // NAVIGATION
+  // ========================================
+
+  // 🔹 Naviguer vers les détails
+  viewDetails(suggestion: Suggestion): void {
+    this.router.navigate(['/suggestions', suggestion.id]);
   }
 
   // ========================================
@@ -316,58 +329,6 @@ export class ListSuggestionComponent implements OnInit {
   }
 
   // ========================================
-  // GESTION DES SUGGESTIONS
-  // ========================================
-
-  // 🔹 Réinitialiser toutes les données
-  resetAllData(): void {
-    if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données ?')) {
-      localStorage.removeItem('suggestions');
-      localStorage.removeItem('favorites');
-      this.favorites = [];
-      this.initializeSuggestions();
-      this.currentFilter = 'all';
-      this.showFavoritesView = false;
-      this.searchText = '';
-      this.showSuccess('Données réinitialisées avec succès');
-    }
-  }
-
-  // 🔹 Ajouter une nouvelle suggestion
-  addSuggestion(suggestion: Suggestion): void {
-    const newId = Math.max(...this.suggestions.map(s => s.id), 0) + 1;
-    const newSuggestion = {
-      ...suggestion,
-      id: newId,
-      date: new Date(),
-      nbLikes: 0,
-      status: 'en_attente' as const
-    };
-    this.suggestions.push(newSuggestion);
-    this.saveSuggestions();
-    this.showSuccess(`✨ Nouvelle suggestion ajoutée`);
-  }
-
-  // 🔹 Supprimer une suggestion
-  deleteSuggestion(suggestion: Suggestion): void {
-    if (confirm(`Voulez-vous supprimer "${suggestion.title}" ?`)) {
-      // Supprimer des suggestions
-      const suggestionIndex = this.suggestions.findIndex(s => s.id === suggestion.id);
-      if (suggestionIndex !== -1) {
-        this.suggestions.splice(suggestionIndex, 1);
-      }
-      
-      // Supprimer des favoris si présent
-      if (this.isFavorite(suggestion)) {
-        this.removeFromFavorites(suggestion);
-      }
-      
-      this.saveSuggestions();
-      this.showSuccess(`🗑️ "${suggestion.title}" a été supprimé`);
-    }
-  }
-
-  // ========================================
   // GESTION DE LA RECHERCHE
   // ========================================
 
@@ -401,45 +362,5 @@ export class ListSuggestionComponent implements OnInit {
     setTimeout(() => {
       this.errorMessage = null;
     }, 3000);
-  }
-
-  // ========================================
-  // UTILITAIRES
-  // ========================================
-
-  // 🔹 Trier les suggestions (par date, likes, etc.)
-  sortSuggestions(criteria: 'date' | 'likes' | 'title'): void {
-    switch (criteria) {
-      case 'date':
-        this.suggestions.sort((a, b) => b.date.getTime() - a.date.getTime());
-        break;
-      case 'likes':
-        this.suggestions.sort((a, b) => b.nbLikes - a.nbLikes);
-        break;
-      case 'title':
-        this.suggestions.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-    }
-    this.saveSuggestions();
-    this.showSuccess(`Suggestions triées par ${criteria}`);
-  }
-
-  // 🔹 Exporter les données
-  exportData(): void {
-    const data = {
-      suggestions: this.suggestions,
-      favorites: this.favorites,
-      exportDate: new Date()
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `suggestions-export-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-    
-    this.showSuccess('Données exportées avec succès');
   }
 }

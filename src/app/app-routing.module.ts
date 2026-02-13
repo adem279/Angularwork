@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './core/home/home.component';
 import { NotfoundComponent } from './core/notfound/notfound.component';
-import { ListSuggestionComponent } from './core/list-suggestion/list-suggestion.component';
 
 const routes: Routes = [
   // Route par défaut - redirige vers /home
@@ -11,8 +10,9 @@ const routes: Routes = [
   // Route vers la page d'accueil
   { path: 'home', component: HomeComponent },
   
-  // Route vers la liste des suggestions
-  { path: 'listSuggestion', component: ListSuggestionComponent },
+  // Routes lazy loading
+  { path: 'suggestions', loadChildren: () => import('./features/suggestions/suggestions.module').then(m => m.SuggestionsModule) },
+  { path: 'users', loadChildren: () => import('./features/users/users.module').then(m => m.UsersModule) },
   
   // Route 404 - doit être en dernier
   { path: '**', component: NotfoundComponent }

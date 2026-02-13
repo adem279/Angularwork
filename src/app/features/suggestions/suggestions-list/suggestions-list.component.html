@@ -1,0 +1,172 @@
+<div class="container">
+  <!-- Messages -->
+  <div class="messages" *ngIf="successMessage || errorMessage">
+    <div class="message success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+    <div class="message error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <span class="stat-icon">📊</span>
+      <div class="stat-content">
+        <div class="stat-value">{{ suggestions.length }}</div>
+        <div class="stat-label">Total</div>
+      </div>
+    </div>
+    <div class="stat-card accepted">
+      <span class="stat-icon">✅</span>
+      <div class="stat-content">
+        <div class="stat-value">{{ getAcceptedCount() }}</div>
+        <div class="stat-label">Acceptées</div>
+      </div>
+    </div>
+    <div class="stat-card pending">
+      <span class="stat-icon">⏳</span>
+      <div class="stat-content">
+        <div class="stat-value">{{ getPendingCount() }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
+    </div>
+    <div class="stat-card rejected">
+      <span class="stat-icon">❌</span>
+      <div class="stat-content">
+        <div class="stat-value">{{ getRejectedCount() }}</div>
+        <div class="stat-label">Refusées</div>
+      </div>
+    </div>
+    <div class="stat-card likes">
+      <span class="stat-icon">❤️</span>
+      <div class="stat-content">
+        <div class="stat-value">{{ getTotalLikes() }}</div>
+        <div class="stat-label">Total Likes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="search-section">
+    <div class="search-container">
+      <input 
+        type="text" 
+        [(ngModel)]="searchText" 
+        placeholder="Rechercher une suggestion..."
+        class="search-input"
+      >
+      <button class="clear-search" *ngIf="searchText" (click)="clearSearch()">✕</button>
+    </div>
+
+    <div class="filters">
+      <button 
+        [class.active]="!showFavoritesView && currentFilter === 'all'"
+        (click)="setFilter('all')"
+        class="filter-btn">
+        Toutes
+      </button>
+      <button 
+        [class.active]="!showFavoritesView && currentFilter === 'acceptee'"
+        (click)="setFilter('acceptee')"
+        class="filter-btn accepted">
+        ✅ Acceptées
+      </button>
+      <button 
+        [class.active]="!showFavoritesView && currentFilter === 'en_attente'"
+        (click)="setFilter('en_attente')"
+        class="filter-btn pending">
+        ⏳ En attente
+      </button>
+      <button 
+        [class.active]="!showFavoritesView && currentFilter === 'refusee'"
+        (click)="setFilter('refusee')"
+        class="filter-btn rejected">
+        ❌ Refusées
+      </button>
+      <button 
+        [class.active]="showFavoritesView"
+        (click)="showFavorites()"
+        class="filter-btn favorite">
+        ⭐ Favoris ({{ favorites.length }})
+      </button>
+      <button 
+        *ngIf="showFavoritesView || currentFilter !== 'all' || searchText"
+        (click)="resetFilters()"
+        class="filter-btn clear">
+        ✕ Effacer
+      </button>
+    </div>
+  </div>
+
+  <!-- Liste des suggestions -->
+  <div class="suggestions-grid" *ngIf="!isLoading">
+    <div *ngIf="displaySuggestions.length === 0" class="empty-state">
+      <p>😔 Aucune suggestion trouvée</p>
+      <button *ngIf="showFavoritesView" (click)="resetFilters()" class="btn-primary">
+        Voir toutes les suggestions
+      </button>
+      <button *ngIf="!showFavoritesView && (searchText || currentFilter !== 'all')" (click)="resetFilters()" class="btn-primary">
+        Effacer les filtres
+      </button>
+    </div>
+
+    <div *ngFor="let suggestion of displaySuggestions" 
+         class="suggestion-card" 
+         [ngClass]="suggestion.status">
+      
+      <div class="status-badge" [ngClass]="suggestion.status">
+        <span *ngIf="suggestion.status === 'acceptee'">✅</span>
+        <span *ngIf="suggestion.status === 'en_attente'">⏳</span>
+        <span *ngIf="suggestion.status === 'refusee'">❌</span>
+        <span>{{ suggestion.status === 'acceptee' ? 'Acceptée' : 
+                 suggestion.status === 'en_attente' ? 'En attente' : 'Refusée' }}</span>
+      </div>
+
+      <div class="card-header">
+        <h3 class="suggestion-title">{{ suggestion.title }}</h3>
+        <span class="category-tag">📁 {{ suggestion.category }}</span>
+      </div>
+
+      <p class="suggestion-description">{{ suggestion.description }}</p>
+
+      <div class="card-footer">
+        <div class="footer-item">
+          <span>📅</span>
+          <span>{{ suggestion.date | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="footer-item likes">
+          <span>❤️</span>
+          <span>{{ suggestion.nbLikes }} j'aime</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="action-btn like" (click)="incrementLikes(suggestion)">
+          <span>👍</span>
+          <span>J'aime</span>
+        </button>
+        <button class="action-btn fav" (click)="toggleFavorite(suggestion)">
+          <span>{{ isFavorite(suggestion) ? '⭐' : '☆' }}</span>
+          <span>{{ isFavorite(suggestion) ? 'Favori' : 'Ajouter' }}</span>
+        </button>
+        <button class="action-btn details" (click)="viewDetails(suggestion)">
+          <span>📄</span>
+          <span>Détails</span>
+        </button>
+      </div>
+
+      <div class="rejected-note" *ngIf="suggestion.status === 'refusee'">
+        <span>🚫</span>
+        <span>Cette suggestion a été refusée</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement des suggestions...</p>
+  </div>
+</div>
