@@ -52,6 +52,7 @@ body {
   color: var(--color-text-primary);
   line-height: 1.6;
   min-height: 100vh;
+  padding: 2rem;
 }
 
 ::-webkit-scrollbar {
@@ -87,5 +88,575 @@ h1, h2, h3, h4, h5, h6 {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* =========================================
+   CONTAINER
+========================================= */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+.container-content {
+  padding: 2.5rem;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.header-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.header-glow {
+  display: none;
+}
+
+.subtitle {
+  color: var(--color-text-tertiary);
+  font-size: 0.95rem;
+  font-weight: 400;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.header-divider {
+  width: 80px;
+  height: 3px;
+  background: var(--color-primary);
+  margin: 0 auto;
+  border-radius: var(--radius-full);
+}
+
+/* =========================================
+   STATS
+========================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  text-align: center;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  display: none;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border);
+}
+
+.stat-card.total {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.stat-card.accepted {
+  background: var(--status-accepted);
+  color: white;
+  border-color: var(--status-accepted);
+}
+
+.stat-card.pending {
+  background: var(--status-pending);
+  color: white;
+  border-color: var(--status-pending);
+}
+
+.stat-card.rejected {
+  background: var(--status-rejected);
+  color: white;
+  border-color: var(--status-rejected);
+}
+
+.stat-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+.search-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  background: var(--color-surface);
+  transition: var(--transition);
+  font-family: inherit;
+  font-weight: 400;
+  color: var(--color-text-primary);
+}
+
+.search-box input::placeholder {
+  color: var(--color-text-light);
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* =========================================
+   FILTERS
+========================================= */
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-family: inherit;
+}
+
+.filter-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border);
+}
+
+.filter-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.filter-btn.accepted.active {
+  background: var(--status-accepted);
+  border-color: var(--status-accepted);
+}
+
+.filter-btn.pending.active {
+  background: var(--status-pending);
+  border-color: var(--status-pending);
+}
+
+.filter-btn.rejected.active {
+  background: var(--status-rejected);
+  border-color: var(--status-rejected);
+}
+
+.filter-btn.favorite.active {
+  background: #fbbf24;
+  border-color: #fbbf24;
+  color: #78350f;
+}
+
+/* =========================================
+   SUGGESTION CARDS
+========================================= */
+.suggestions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.suggestion-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.3s ease;
+}
+
+.suggestion-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-border);
+}
+
+.suggestion-card::after {
+  display: none;
+}
+
+.suggestion-card.accepted {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.suggestion-card.accepted::before {
+  background: var(--status-accepted);
+}
+
+.suggestion-card.pending {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.suggestion-card.pending::before {
+  background: var(--status-pending);
+}
+
+.suggestion-card.rejected {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  opacity: 0.75;
+}
+
+.suggestion-card.rejected::before {
+  background: var(--status-rejected);
+}
+
+.suggestion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border);
+}
+
+/* =========================================
+   BADGE
+========================================= */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.accepted {
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted);
+}
+
+.status-badge.pending {
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
+}
+
+.status-badge.rejected {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected);
+}
+
+/* =========================================
+   CARD CONTENT
+========================================= */
+.card-header {
+  margin-bottom: 0.75rem;
+}
+
+.suggestion-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--color-surface-hover);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.suggestion-card.accepted .category-tag {
+  background: var(--status-accepted-bg);
+  color: var(--status-accepted);
+  border-color: var(--status-accepted);
+}
+
+.suggestion-card.pending .category-tag {
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
+  border-color: var(--status-pending);
+}
+
+.suggestion-card.rejected .category-tag {
+  background: var(--status-rejected-bg);
+  color: var(--status-rejected);
+  border-color: var(--status-rejected);
+}
+
+.suggestion-description {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+/* =========================================
+   CARD FOOTER
+========================================= */
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-light);
+  margin-bottom: 1rem;
+}
+
+.footer-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+.footer-item.likes {
+  color: var(--status-rejected);
+}
+
+/* =========================================
+   ACTIONS
+========================================= */
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.action-btn:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-1px);
+}
+
+.action-btn.like {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.action-btn.like:hover {
+  background: var(--status-rejected);
+  color: white;
+  border-color: var(--status-rejected);
+}
+
+.action-btn.fav {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.action-btn.fav:hover {
+  background: #fbbf24;
+  color: #78350f;
+  border-color: #fbbf24;
+}
+
+/* =========================================
+   REJECTED NOTE
+========================================= */
+.rejected-note {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--status-rejected-bg);
+  border-radius: var(--radius-sm);
+  color: var(--status-rejected);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid var(--status-rejected);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--color-surface-hover);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-tertiary);
+  font-style: italic;
+  font-size: 1rem;
+  display: none;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+
+  .container-content {
+    padding: 1.5rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 0.875rem;
+  }
+
+  .stat-icon {
+    font-size: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .filters {
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .suggestion-card {
+    padding: 1.25rem;
+  }
+
+  .suggestion-title {
+    font-size: 1.125rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
   }
 }
