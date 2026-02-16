@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class SuggestionDetailsComponent implements OnInit {
   suggestionId: number = 0;
   suggestion: any;
+  currentIndex: number = 0; // ← À AJOUTER
 
   // Liste simulée - remplacez par votre service plus tard
   suggestions = [
@@ -56,6 +57,40 @@ export class SuggestionDetailsComponent implements OnInit {
 
   loadSuggestion(): void {
     this.suggestion = this.suggestions.find(s => s.id === this.suggestionId);
+    // ← AJOUTER CES LIGNES
+    if (this.suggestion) {
+      this.currentIndex = this.suggestions.findIndex(s => s.id === this.suggestionId);
+    }
+  }
+
+  // ← AJOUTER TOUTES CES MÉTHODES
+  goToNextSuggestion(): void {
+    if (this.hasNextSuggestion()) {
+      this.currentIndex++;
+      this.suggestion = this.suggestions[this.currentIndex];
+      this.updateUrl();
+    }
+  }
+
+  goToPreviousSuggestion(): void {
+    if (this.hasPreviousSuggestion()) {
+      this.currentIndex--;
+      this.suggestion = this.suggestions[this.currentIndex];
+      this.updateUrl();
+    }
+  }
+
+  hasNextSuggestion(): boolean {
+    return this.currentIndex < this.suggestions.length - 1;
+  }
+
+  hasPreviousSuggestion(): boolean {
+    return this.currentIndex > 0;
+  }
+
+  updateUrl(): void {
+    // Met à jour l'URL avec le nouvel ID
+    this.router.navigate(['/suggestions', this.suggestion.id]);
   }
 
   goBack(): void {

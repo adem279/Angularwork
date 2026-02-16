@@ -1,7 +1,26 @@
 <div class="details-container" *ngIf="suggestion">
-  <button class="btn-back" (click)="goBack()">
-    ← Retour à la liste
-  </button>
+  <div class="navigation-header">
+    <button class="btn-back" (click)="goBack()">
+      ← Retour à la liste
+    </button>
+    
+    <!-- AJOUTEZ CES BOUTONS DE NAVIGATION -->
+    <div class="nav-buttons">
+      <button class="btn-prev" (click)="goToPreviousSuggestion()" 
+              [disabled]="!hasPreviousSuggestion()">
+        ← Précédente
+      </button>
+      
+      <span class="counter">
+        {{ currentIndex + 1 }} / {{ suggestions.length }}
+      </span>
+      
+      <button class="btn-next" (click)="goToNextSuggestion()" 
+              [disabled]="!hasNextSuggestion()">
+        Suivante →
+      </button>
+    </div>
+  </div>
 
   <div class="details-card">
     <div class="status-badge" [ngClass]="suggestion.status">
