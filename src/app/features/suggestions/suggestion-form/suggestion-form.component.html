@@ -1,0 +1,111 @@
+<div class="form-container">
+  <h2>Ajouter une nouvelle suggestion</h2>
+
+  <form [formGroup]="suggestionForm" (ngSubmit)="onSubmit()" class="suggestion-form">
+    
+    <!-- Champ Titre -->
+    <div class="form-group">
+      <label for="title">Titre <span class="required">*</span></label>
+      <input 
+        type="text" 
+        id="title" 
+        formControlName="title" 
+        class="form-control"
+        [class.is-invalid]="title?.invalid && title?.touched"
+        placeholder="Ex: Améliorer l'espace de travail"
+      >
+      <div class="error-messages" *ngIf="title?.invalid && title?.touched">
+        <small *ngIf="title?.errors?.['required']">Le titre est obligatoire.</small>
+        <small *ngIf="title?.errors?.['minlength']">
+          Le titre doit contenir au moins 5 caractères. 
+          ({{ title?.value?.length || 0 }}/5)
+        </small>
+        <small *ngIf="title?.errors?.['pattern']">
+          Le titre doit commencer par une majuscule et ne contenir que des lettres (sans espaces).
+        </small>
+      </div>
+    </div>
+
+    <!-- Champ Description -->
+    <div class="form-group">
+      <label for="description">Description <span class="required">*</span></label>
+      <textarea 
+        id="description" 
+        formControlName="description" 
+        rows="6"
+        class="form-control"
+        [class.is-invalid]="description?.invalid && description?.touched"
+        placeholder="Décrivez votre suggestion en détail..."
+      ></textarea>
+      <div class="error-messages" *ngIf="description?.invalid && description?.touched">
+        <small *ngIf="description?.errors?.['required']">La description est obligatoire.</small>
+        <small *ngIf="description?.errors?.['minlength']">
+          La description doit contenir au moins 30 caractères. 
+          ({{ description?.value?.length || 0 }}/30)
+        </small>
+      </div>
+      <div class="char-counter" *ngIf="description?.value?.length < 30 && description?.value?.length > 0">
+        ⚠️ Encore {{ 30 - (description?.value?.length || 0) }} caractères requis
+      </div>
+    </div>
+
+    <!-- Champ Catégorie -->
+    <div class="form-group">
+      <label for="category">Catégorie <span class="required">*</span></label>
+      <select 
+        id="category" 
+        formControlName="category" 
+        class="form-control"
+        [class.is-invalid]="category?.invalid && category?.touched"
+      >
+        <option value="">-- Sélectionnez une catégorie --</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+      <div class="error-messages" *ngIf="category?.invalid && category?.touched">
+        <small *ngIf="category?.errors?.['required']">Veuillez sélectionner une catégorie.</small>
+      </div>
+    </div>
+
+    <!-- Informations en lecture seule -->
+    <div class="readonly-info">
+      <div class="info-row">
+        <span class="info-label">Date :</span>
+        <span class="info-value">{{ getCurrentDate() }}</span>
+        <span class="info-note">(automatique)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Statut :</span>
+        <span class="info-value status-badge">⏳ En attente</span>
+        <span class="info-note">(par défaut)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Likes :</span>
+        <span class="info-value">0</span>
+        <span class="info-note">(initial)</span>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="btn-submit" 
+        [disabled]="suggestionForm.invalid"
+      >
+        ✅ Soumettre la suggestion
+      </button>
+      <button 
+        type="button" 
+        class="btn-cancel" 
+        (click)="onCancel()"
+      >
+        ❌ Annuler
+      </button>
+    </div>
+
+    <!-- Indicateur de validité -->
+    <div class="form-status" *ngIf="suggestionForm.invalid && suggestionForm.touched">
+      ⚠️ Le formulaire contient des erreurs. Veuillez les corriger.
+    </div>
+  </form>
+</div>

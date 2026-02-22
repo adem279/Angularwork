@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SuggestionsComponent } from './suggestions.component';
 import { SuggestionsListComponent } from './suggestions-list/suggestions-list.component';
 import { SuggestionDetailsComponent } from './suggestion-details/suggestion-details.component';
+import { SuggestionFormComponent } from './suggestion-form/suggestion-form.component';
 
 const routes: Routes = [
   { 
@@ -10,7 +11,8 @@ const routes: Routes = [
     component: SuggestionsComponent,
     children: [
       { path: '', component: SuggestionsListComponent },
-      { path: ':id', component: SuggestionDetailsComponent }
+      { path: 'new', component: SuggestionFormComponent }, // ← METTRE CELUI-CI EN PREMIER
+      { path: ':id', component: SuggestionDetailsComponent } // ← CELUI-CI APRÈS new
     ]
   }
 ];

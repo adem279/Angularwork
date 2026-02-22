@@ -1,4 +1,13 @@
 <div class="container">
+  <!-- En-tête avec bouton d'ajout -->
+  <div class="header-actions">
+    <h1>Gestion des Suggestions</h1>
+    <button class="btn-add" routerLink="/suggestions/new">
+      <span>➕</span>
+      Ajouter une suggestion
+    </button>
+  </div>
+
   <!-- Messages -->
   <div class="messages" *ngIf="successMessage || errorMessage">
     <div class="message success" *ngIf="successMessage">
