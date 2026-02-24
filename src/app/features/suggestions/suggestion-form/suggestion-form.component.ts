@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SuggestionService } from '../../../core/services/suggestion.service'; // ← AJOUTER
 import { Suggestion } from '../../../models/suggestion';
 
 @Component({
@@ -27,7 +28,8 @@ export class SuggestionFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private suggestionService: SuggestionService // ← INJECTER LE SERVICE
   ) {}
 
   ngOnInit(): void {
@@ -36,7 +38,7 @@ export class SuggestionFormComponent implements OnInit {
       title: ['', [
         Validators.required,
         Validators.minLength(5),
-        Validators.pattern('^[A-Z][a-zA-Z]*$') // Commence par majuscule, que des lettres
+        Validators.pattern('^[A-Z][a-zA-Z]*$')
       ]],
       description: ['', [
         Validators.required,
@@ -60,36 +62,30 @@ export class SuggestionFormComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  // ✅ VERSION MODIFIÉE avec appel API
   onSubmit(): void {
     if (this.suggestionForm.valid) {
-      // Récupérer les suggestions existantes
-      const savedSuggestions = localStorage.getItem('suggestions');
-      let suggestions: Suggestion[] = savedSuggestions ? JSON.parse(savedSuggestions) : [];
       
-      // Calculer le nouvel ID
-      const newId = suggestions.length > 0 
-        ? Math.max(...suggestions.map(s => s.id)) + 1 
-        : 1;
-
-      // Créer la nouvelle suggestion
-      const newSuggestion: Suggestion = {
-        id: newId,
+      // Préparer les données pour l'API (sans id, sans date)
+      const newSuggestion = {
         title: this.suggestionForm.value.title,
         description: this.suggestionForm.value.description,
         category: this.suggestionForm.value.category,
-        date: new Date(this.getCurrentDate()),
         status: 'en_attente',
         nbLikes: 0
       };
 
-      // Ajouter à la liste
-      suggestions.push(newSuggestion);
-
-      // Sauvegarder
-      localStorage.setItem('suggestions', JSON.stringify(suggestions));
-
-      // Rediriger vers la liste
-      this.router.navigate(['/suggestions']);
+      // Appel API pour ajouter la suggestion
+      this.suggestionService.addSuggestion(newSuggestion).subscribe({
+        next: (response: any) => {
+          console.log('✅ Suggestion ajoutée:', response);
+          this.router.navigate(['/suggestions']); // Redirection vers la liste
+        },
+        error: (err: any) => {
+          console.error('❌ Erreur ajout:', err);
+          alert('Erreur lors de l\'ajout de la suggestion');
+        }
+      });
     }
   }
 

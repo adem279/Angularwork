@@ -30,4 +30,9 @@ export class SuggestionService {
   deleteSuggestion(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // ✅ NOUVELLE MÉTHODE
+  addSuggestion(suggestion: any) {
+    return this.http.post(this.apiUrl, suggestion);
+  }
 }
