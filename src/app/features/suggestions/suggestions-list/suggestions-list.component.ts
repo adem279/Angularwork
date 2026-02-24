@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Suggestion } from '../../../models/suggestion';
+import { SuggestionService } from '../../../core/services/suggestion.service';
 
 @Component({
   selector: 'app-suggestions-list',
@@ -25,7 +26,8 @@ export class SuggestionsListComponent implements OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private router: Router
+    private router: Router,
+    private suggestionService: SuggestionService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +43,11 @@ export class SuggestionsListComponent implements OnInit {
     this.router.navigate(['/suggestions', suggestion.id]);
   }
 
+  // 🔹 Naviguer vers le formulaire d'ajout
+  goToAddSuggestion(): void {
+    this.router.navigate(['/suggestions/new']);
+  }
+
   // ========================================
   // CHARGEMENT DES DONNÉES
   // ========================================
@@ -50,117 +57,36 @@ export class SuggestionsListComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
+    // Utiliser l'API pour récupérer les suggestions
+    this.suggestionService.getSuggestionsFromApi().subscribe({
+      next: (data: any) => {
+        this.suggestions = data;
+        this.isLoading = false;
+        console.log('✅ Suggestions chargées depuis l\'API:', data);
+      },
+      error: (error: any) => {
+        console.error('❌ Erreur API:', error);
+        this.errorMessage = 'Erreur de chargement. Utilisation des données locales.';
+        
+        // Fallback sur les données statiques
+        this.suggestions = this.suggestionService.getSuggestionsList();
+        this.isLoading = false;
+      }
+    });
+
+    // Charger les favoris depuis localStorage
     if (isPlatformBrowser(this.platformId)) {
       try {
-        const savedSuggestions = localStorage.getItem('suggestions');
         const savedFavorites = localStorage.getItem('favorites');
-
-        if (savedSuggestions) {
-          this.suggestions = JSON.parse(savedSuggestions).map((s: any) => ({
+        if (savedFavorites) {
+          this.favorites = JSON.parse(savedFavorites).map((s: any) => ({
             ...s,
             date: new Date(s.date)
           }));
-        } else {
-          this.initializeSuggestions();
-        }
-
-        if (savedFavorites) {
-          this.favorites = JSON.parse(savedFavorites);
         }
       } catch (error) {
-        console.error('Error loading data:', error);
-        this.errorMessage = 'Erreur lors du chargement des données';
-        this.initializeSuggestions();
-      }
-    } else {
-      this.initializeSuggestions();
-    }
-
-    this.isLoading = false;
-  }
-
-  // 🔹 Initialisation des données
-  initializeSuggestions(): void {
-    this.suggestions = [
-      {
-        id: 1,
-        title: 'Organiser une journée team building',
-        description: 'Suggestion pour organiser une journée de team building avec des activités ludiques et collaboratives.',
-        category: 'Événements',
-        date: new Date('2025-01-20'),
-        status: 'acceptee',
-        nbLikes: 10
-      },
-      {
-        id: 2,
-        title: 'Améliorer le système de réservation',
-        description: 'Améliorer la gestion des réservations pour une meilleure expérience utilisateur.',
-        category: 'Technologie',
-        date: new Date('2025-01-15'),
-        status: 'refusee',
-        nbLikes: 0
-      },
-      {
-        id: 3,
-        title: 'Créer un système de récompenses',
-        description: 'Motiver les employés avec un système de points et récompenses.',
-        category: 'Ressources Humaines',
-        date: new Date('2025-01-25'),
-        status: 'refusee',
-        nbLikes: 0
-      },
-      {
-        id: 4,
-        title: 'Moderniser l\'interface utilisateur',
-        description: 'Refonte complète de l\'interface utilisateur pour une meilleure ergonomie.',
-        category: 'Technologie',
-        date: new Date('2025-01-30'),
-        status: 'en_attente',
-        nbLikes: 0
-      },
-      {
-        id: 5,
-        title: 'Mise en place du télétravail',
-        description: 'Organisation et politique de télétravail pour plus de flexibilité.',
-        category: 'Ressources Humaines',
-        date: new Date('2025-02-01'),
-        status: 'en_attente',
-        nbLikes: 5
-      },
-      {
-        id: 6,
-        title: 'Machine à café connectée',
-        description: 'Installer une machine à café intelligente avec application mobile.',
-        category: 'Bien-être',
-        date: new Date('2025-02-05'),
-        status: 'acceptee',
-        nbLikes: 15
-      }
-    ];
-
-    this.saveSuggestions();
-  }
-
-  // 🔹 Sauvegarder suggestions
-  saveSuggestions(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      try {
-        localStorage.setItem('suggestions', JSON.stringify(this.suggestions));
-      } catch (error) {
-        console.error('Error saving suggestions:', error);
-        this.errorMessage = 'Erreur lors de la sauvegarde des suggestions';
-      }
-    }
-  }
-
-  // 🔹 Sauvegarder favoris
-  saveFavorites(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      try {
-        localStorage.setItem('favorites', JSON.stringify(this.favorites));
-      } catch (error) {
-        console.error('Error saving favorites:', error);
-        this.errorMessage = 'Erreur lors de la sauvegarde des favoris';
+        console.error('Error loading favorites:', error);
+        this.errorMessage = 'Erreur lors du chargement des favoris';
       }
     }
   }
@@ -229,11 +155,6 @@ export class SuggestionsListComponent implements OnInit {
     this.showSuccess('Filtres réinitialisés');
   }
 
-  // 🔹 Gestion du bouton d'action vide
-  handleEmptyAction(): void {
-    this.resetFilters();
-  }
-
   // 🔹 Libellé du filtre
   private getFilterLabel(filter: string): string {
     const labels: {[key: string]: string} = {
@@ -276,7 +197,7 @@ export class SuggestionsListComponent implements OnInit {
   // 🔹 Incrémenter les likes
   incrementLikes(suggestion: Suggestion): void {
     suggestion.nbLikes++;
-    this.saveSuggestions();
+    // TODO: Appeler l'API pour mettre à jour le like
     this.showSuccess(`👍 Like ajouté pour "${suggestion.title}"`);
   }
 
@@ -314,6 +235,18 @@ export class SuggestionsListComponent implements OnInit {
       this.removeFromFavorites(suggestion);
     } else {
       this.addToFavorites(suggestion);
+    }
+  }
+
+  // 🔹 Sauvegarder favoris
+  private saveFavorites(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        localStorage.setItem('favorites', JSON.stringify(this.favorites));
+      } catch (error) {
+        console.error('Error saving favorites:', error);
+        this.errorMessage = 'Erreur lors de la sauvegarde des favoris';
+      }
     }
   }
 
