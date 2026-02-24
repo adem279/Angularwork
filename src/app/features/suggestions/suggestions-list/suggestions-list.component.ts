@@ -48,6 +48,11 @@ export class SuggestionsListComponent implements OnInit {
     this.router.navigate(['/suggestions/new']);
   }
 
+  // 🔹 Naviguer vers le formulaire d'édition
+  editSuggestion(suggestion: Suggestion): void {
+    this.router.navigate(['/suggestions/edit', suggestion.id]);
+  }
+
   // ========================================
   // CHARGEMENT DES DONNÉES
   // ========================================
@@ -99,7 +104,7 @@ export class SuggestionsListComponent implements OnInit {
           this.showSuccess(`✅ "${suggestion.title}" supprimée`);
           this.loadData(); // Recharger la liste
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('❌ Erreur suppression:', err);
           this.showError('Erreur lors de la suppression');
         }

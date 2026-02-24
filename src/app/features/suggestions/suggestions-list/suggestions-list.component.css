@@ -748,4 +748,17 @@ body::before {
     padding: 12px 20px;
     font-size: 14px;
   }
+  /* Style pour le bouton Modifier */
+.action-btn.edit {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+  color: #856404;
+  border-color: #ffe69c;
+}
+
+.action-btn.edit:hover {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #212529;
+  border-color: #ffc107;
+  box-shadow: 0 8px 16px rgba(255, 193, 7, 0.3);
+}
 }

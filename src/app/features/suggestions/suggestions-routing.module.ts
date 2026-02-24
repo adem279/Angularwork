@@ -11,8 +11,9 @@ const routes: Routes = [
     component: SuggestionsComponent,
     children: [
       { path: '', component: SuggestionsListComponent },
-      { path: 'new', component: SuggestionFormComponent }, // ← METTRE CELUI-CI EN PREMIER
-      { path: ':id', component: SuggestionDetailsComponent } // ← CELUI-CI APRÈS new
+      { path: 'new', component: SuggestionFormComponent },
+      { path: 'edit/:id', component: SuggestionFormComponent }, // ← AJOUTER CETTE LIGNE
+      { path: ':id', component: SuggestionDetailsComponent }
     ]
   }
 ];
