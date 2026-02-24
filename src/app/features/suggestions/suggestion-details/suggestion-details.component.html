@@ -1,10 +1,9 @@
-<div class="details-container" *ngIf="suggestion">
+<div class="details-container" *ngIf="suggestion && !isLoading">
   <div class="navigation-header">
     <button class="btn-back" (click)="goBack()">
       ← Retour à la liste
     </button>
     
-    <!-- AJOUTEZ CES BOUTONS DE NAVIGATION -->
     <div class="nav-buttons">
       <button class="btn-prev" (click)="goToPreviousSuggestion()" 
               [disabled]="!hasPreviousSuggestion()">
@@ -24,27 +23,39 @@
 
   <div class="details-card">
     <div class="status-badge" [ngClass]="suggestion.status">
-      <span *ngIf="suggestion.status === 'accepted'">✅ Acceptée</span>
-      <span *ngIf="suggestion.status === 'pending'">⏳ En attente</span>
-      <span *ngIf="suggestion.status === 'rejected'">❌ Refusée</span>
+      <span *ngIf="suggestion.status === 'acceptee'">✅ Acceptée</span>
+      <span *ngIf="suggestion.status === 'en_attente'">⏳ En attente</span>
+      <span *ngIf="suggestion.status === 'refusee'">❌ Refusée</span>
     </div>
 
     <h1>{{ suggestion.title }}</h1>
     
     <div class="meta-info">
       <span class="category">📁 {{ suggestion.category }}</span>
-      <span class="date">📅 {{ suggestion.date }}</span>
-      <span class="likes">❤️ {{ suggestion.likes }} j'aime</span>
+      <span class="date">📅 {{ suggestion.date | date:'dd/MM/yyyy' }}</span>
+      <span class="likes">❤️ {{ suggestion.nbLikes }} j'aime</span>
     </div>
 
     <div class="description">
       <h3>Description</h3>
       <p>{{ suggestion.description }}</p>
     </div>
+
+    <!-- ✅ BOUTON UPDATE AJOUTÉ -->
+    <div class="details-actions">
+      <button class="btn-update" (click)="goToEdit()">
+        ✏️ Modifier cette suggestion
+      </button>
+    </div>
   </div>
 </div>
 
-<div class="not-found" *ngIf="!suggestion">
+<div class="loading" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p>Chargement des détails...</p>
+</div>
+
+<div class="not-found" *ngIf="!suggestion && !isLoading">
   <h2>😕 Suggestion introuvable</h2>
   <button class="btn-back" (click)="goBack()">
     ← Retour à la liste

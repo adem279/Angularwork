@@ -9,8 +9,8 @@ import { SuggestionService } from '../../../core/services/suggestion.service';
 })
 export class SuggestionDetailsComponent implements OnInit {
   suggestion: any = null;
-  suggestions: any[] = [];  // ← AJOUTER
-  currentIndex: number = 0;  // ← AJOUTER
+  suggestions: any[] = [];
+  currentIndex: number = 0;
   isLoading: boolean = true;
   errorMessage: string | null = null;
 
@@ -21,7 +21,6 @@ export class SuggestionDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Charger d'abord toutes les suggestions
     this.loadAllSuggestions();
   }
 
@@ -29,7 +28,6 @@ export class SuggestionDetailsComponent implements OnInit {
     this.suggestionService.getSuggestionsFromApi().subscribe({
       next: (data: any) => {
         this.suggestions = data;
-        // Ensuite charger la suggestion spécifique
         const id = +this.route.snapshot.params['id'];
         this.loadSuggestion(id);
       },
@@ -44,6 +42,13 @@ export class SuggestionDetailsComponent implements OnInit {
     this.currentIndex = this.suggestions.findIndex(s => s.id === id);
     this.suggestion = this.suggestions[this.currentIndex];
     this.isLoading = false;
+  }
+
+  // ✅ Méthode pour aller vers le formulaire d'édition
+  goToEdit(): void {
+    if (this.suggestion) {
+      this.router.navigate(['/suggestions/edit', this.suggestion.id]);
+    }
   }
 
   // Méthodes de navigation
