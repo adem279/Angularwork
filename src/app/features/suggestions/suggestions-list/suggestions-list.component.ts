@@ -91,6 +91,22 @@ export class SuggestionsListComponent implements OnInit {
     }
   }
 
+  // ✅ Méthode pour supprimer une suggestion
+  deleteSuggestion(suggestion: Suggestion): void {
+    if (confirm(`Voulez-vous vraiment supprimer "${suggestion.title}" ?`)) {
+      this.suggestionService.deleteSuggestion(suggestion.id).subscribe({
+        next: () => {
+          this.showSuccess(`✅ "${suggestion.title}" supprimée`);
+          this.loadData(); // Recharger la liste
+        },
+        error: (err) => {
+          console.error('❌ Erreur suppression:', err);
+          this.showError('Erreur lors de la suppression');
+        }
+      });
+    }
+  }
+
   // ========================================
   // FILTRES ET AFFICHAGE
   // ========================================

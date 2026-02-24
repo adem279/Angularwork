@@ -164,6 +164,11 @@
           <span>📄</span>
           <span>Détails</span>
         </button>
+        <!-- ✅ BOUTON SUPPRIMER AJOUTÉ -->
+        <button class="action-btn delete" (click)="deleteSuggestion(suggestion)">
+          <span>🗑️</span>
+          <span>Supprimer</span>
+        </button>
       </div>
 
       <div class="rejected-note" *ngIf="suggestion.status === 'refusee'">
